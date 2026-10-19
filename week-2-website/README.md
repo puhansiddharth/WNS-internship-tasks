@@ -135,6 +135,13 @@ This project fulfills the following Week 2 learning objectives:
 - **No external libraries**: This project uses only vanilla HTML, CSS, and JavaScript as required
 - **No backend or authentication**: Pure client-side application
 - **Beginner-friendly**: Code is clean, well-structured, and easy to explain
+
+
+<img width="1917" height="1032" alt="image" src="https://github.com/user-attachments/assets/4af25cb1-365a-4cf1-a183-c5c7dc36e613" />
+<img width="1766" height="846" alt="image" src="https://github.com/user-attachments/assets/c3874c7c-908f-4f89-9c37-df1c1e3657af" />
+<img width="603" height="813" alt="image" src="https://github.com/user-attachments/assets/810e75dc-40db-482e-9cab-f6531ac0e3d5" />
+
+
 - **Production-ready for demo**: Fully functional with proper error handling and edge cases covered
 - **No TODOs or placeholders**: All features are complete and working as specified
 
