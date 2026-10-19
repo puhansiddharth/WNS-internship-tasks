@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - JavaScript Practice Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="title"><span class="title-icon" aria-hidden="true">✅</span> TaskFlow</h1>
+            <p class="subtitle">JavaScript Practice Dashboard</p>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container main-grid">
+            <!-- Task Manager Section -->
+            <section class="task-section card">
+                <h2 class="section-title">Task Manager</h2>
+                
+                <!-- Form -->
+                <form id="taskForm" class="task-form" novalidate>
+                    <label for="taskInput" class="form-label">Task Description</label>
+                    <div class="form-row">
+                        <input 
+                            type="text" 
+                            id="taskInput" 
+                            class="task-input" 
+                            placeholder="Enter a new task..."
+                            autocomplete="off"
+                            aria-describedby="formMessage"
+                        >
+                        <button type="submit" class="btn btn-primary">Add Task</button>
+                    </div>
+                    <p id="formMessage" class="form-message" aria-live="polite"></p>
+                </form>
+
+                <!-- Filters -->
+                <div class="filters" role="group" aria-label="Task filters">
+                    <button type="button" class="filter-btn active" data-filter="all" aria-pressed="true">All</button>
+                    <button type="button" class="filter-btn" data-filter="pending" aria-pressed="false">Pending</button>
+                    <button type="button" class="filter-btn" data-filter="completed" aria-pressed="false">Completed</button>
+                </div>
+
+                <!-- Task Statistics -->
+                <div class="stats">
+                    <div class="stat-card">
+                        <span class="stat-label">Total Tasks</span>
+                        <span class="stat-value" id="totalTasks">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Pending Tasks</span>
+                        <span class="stat-value" id="pendingTasks">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Completed Tasks</span>
+                        <span class="stat-value" id="completedTasks">0</span>
+                    </div>
+                </div>
+
+                <!-- Tasks List -->
+                <div class="tasks-container">
+                    <h3 class="subsection-title">Tasks</h3>
+                    <div id="tasksList" class="tasks-list" aria-live="polite" aria-label="Task list"></div>
+                    <div id="emptyMessage" class="empty-state">
+                        <span class="empty-icon" aria-hidden="true">📝</span>
+                        <p class="empty-text">No tasks yet. Add one to get started!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Weather Widget Section -->
+            <aside class="weather-section">
+                <section class="weather-card card">
+                    <div class="weather-header-gradient">
+                        <h2 class="section-title weather-title">Live Weather API</h2>
+                    </div>
+                    
+                    <!-- City Search -->
+                    <div class="weather-search">
+                        <label for="cityInput" class="form-label">City</label>
+                        <div class="form-row">
+                            <input 
+                                type="text" 
+                                id="cityInput" 
+                                class="weather-input" 
+                                value="Gwalior"
+                                autocomplete="off"
+                                aria-describedby="weatherMessage"
+                            >
+                            <button type="button" id="searchBtn" class="btn btn-secondary">Search</button>
+                        </div>
+                    </div>
+
+                    <!-- Weather Display -->
+                    <div class="weather-display">
+                        <p id="weatherMessage" class="weather-message" aria-live="polite"></p>
+                        <div id="weatherContent" class="weather-content" aria-live="polite">
+                            <div class="weather-main-display">
+                                <div class="weather-header">
+                                    <h3 class="weather-city" id="weatherCity">Gwalior</h3>
+                                    <span class="weather-icon-large" id="weatherIcon" aria-hidden="true">🌤️</span>
+                                </div>
+                                <div class="temperature-large">
+                                    <span class="temp-value-large" id="tempValue">--</span>
+                                    <span class="temp-unit-large">°C</span>
+                                </div>
+                                <p class="weather-condition-large" id="weatherCondition">--</p>
+                                <p class="feels-like">Feels like <span id="feelsLike">--</span> °C</p>
+                            </div>
+                            <div class="weather-details">
+                                <div class="detail-row">
+                                    <span class="detail-icon" aria-hidden="true">💧</span>
+                                    <div class="detail-info">
+                                        <span class="detail-label">Humidity</span>
+                                        <span class="detail-value"><span id="humidity">--</span>%</span>
+                                    </div>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-icon" aria-hidden="true">💨</span>
+                                    <div class="detail-info">
+                                        <span class="detail-label">Wind Speed</span>
+                                        <span class="detail-value"><span id="windSpeed">--</span> m/s</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="refreshBtn" class="btn btn-refresh btn-full">Refresh Weather</button>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

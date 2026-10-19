@@ -1,0 +1,1 @@
+{"name":"taskflow","version":"1.0.0","scripts":{"dev":"live-server --port=8080 --open=index.html"},"dependencies":{"live-server":"^1.2.2"}}
