@@ -1,0 +1,45 @@
+<div class="demo-card fixed-card">
+  <div class="card-header">
+    <div class="header-title">
+      <span class="badge success-badge">Fixed Implementation</span>
+      <h3>Instance #{{ instanceId }}</h3>
+    </div>
+    <span class="time-stamp">Created at: {{ createdAt }}</span>
+  </div>
+
+  <div class="card-body">
+    <div class="info-row">
+      <span class="label">Status:</span>
+      <span class="value live-status">🟢 Active in DOM</span>
+    </div>
+
+    <div class="info-row">
+      <span class="label">Identifiable Payload:</span>
+      <span class="value code-val">CleanPayload ({{ payload.buffer.length }} items)</span>
+    </div>
+
+    <div class="info-row">
+      <span class="label">Heap Marker:</span>
+      <span class="value code-val">{{ payload.marker }}</span>
+    </div>
+
+    <div class="info-row">
+      <span class="label">Local Resize Events Handled:</span>
+      <span class="value count-val">{{ localResizeEventsCount() }}</span>
+    </div>
+
+    <div class="info-row">
+      <span class="label">Window Width Reported:</span>
+      <span class="value">{{ currentWindowWidth() }} px</span>
+    </div>
+
+    <div class="success-callout">
+      <strong>✅ Memory-Safe Architecture:</strong>
+      <p>
+        This component stores its callback reference: <code>this.windowResizeHandler</code>.
+        When destroyed, <code>ngOnDestroy()</code> executes <code>window.removeEventListener('resize', this.windowResizeHandler)</code>.
+        The retaining reference from <code>window</code> is cleanly severed, allowing V8's Garbage Collector to reclaim this instance.
+      </p>
+    </div>
+  </div>
+</div>

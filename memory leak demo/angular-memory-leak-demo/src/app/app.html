@@ -1,0 +1,553 @@
+<div class="app-container">
+  <!-- Top Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="brand">
+        <div class="logo-icon">⚡</div>
+        <div>
+          <h1>Angular Memory Leak Lab</h1>
+          <p class="subtitle">Root Cause Analysis, Angular Lifecycle Fix & DevTools Heap Profiling</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <nav class="nav-tabs">
+          <button 
+            type="button"
+            class="tab-btn" 
+            [class.active]="activeTab() === 'lab'" 
+            (click)="activeTab.set('lab')">
+            🧪 Interactive Lab
+          </button>
+          <button 
+            type="button"
+            class="tab-btn" 
+            [class.active]="activeTab() === 'architecture'" 
+            (click)="activeTab.set('architecture')">
+            📐 Root Cause & Arch
+          </button>
+          <button 
+            type="button"
+            class="tab-btn" 
+            [class.active]="activeTab() === 'guide'" 
+            (click)="activeTab.set('guide')">
+            🔍 DevTools Profiling Guide
+          </button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- TAB 1: INTERACTIVE LAB -->
+    @if (activeTab() === 'lab') {
+      <div class="lab-view">
+        <!-- Quick Summary Bar -->
+        <div class="stats-ribbon">
+          <div class="stat-card">
+            <span class="stat-label">Total Resize Events Fired</span>
+            <span class="stat-number">{{ logger.resizeCallbackCount() }}</span>
+          </div>
+          <div class="stat-card danger">
+            <span class="stat-label">Zombie Callbacks (Leaked)</span>
+            <span class="stat-number">{{ logger.zombieCallbackCount() }}</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Leaked Instances Created</span>
+            <span class="stat-number">{{ memoryTracker.totalLeakedRegistered() }}</span>
+          </div>
+          <div class="stat-card success">
+            <span class="stat-label">Fixed Instances Created</span>
+            <span class="stat-number">{{ memoryTracker.totalFixedRegistered() }}</span>
+          </div>
+          <div class="stat-card gc">
+            <span class="stat-label">Reclaimed by GC</span>
+            <span class="stat-number">{{ memoryTracker.totalFinalizedByGC() }}</span>
+          </div>
+        </div>
+
+        <!-- Global Control Bar -->
+        <section class="toolbar-section">
+          <div class="toolbar-actions">
+            <button 
+              type="button"
+              class="action-btn btn-primary" 
+              (click)="triggerResizeEvent()" 
+              title="Dispatches window resize event to trigger callbacks">
+              📐 Trigger Window Resize Event
+            </button>
+            <button 
+              type="button"
+              class="action-btn btn-secondary" 
+              (click)="checkMemoryStatus()" 
+              title="Check WeakRef liveness for all created instances">
+              🔍 Check GC & Lifetime Status
+            </button>
+            <button 
+              type="button"
+              class="action-btn btn-outline" 
+              (click)="clearLogs()">
+              🧹 Clear Activity Logs
+            </button>
+            <button 
+              type="button"
+              class="action-btn btn-danger-outline" 
+              (click)="resetAll()">
+              🔄 Reset Lab
+            </button>
+          </div>
+          <div class="toolbar-hint">
+            <strong>Mentor Tip:</strong> Click <em>"Cycle 5x"</em> on both versions, then click <em>"Trigger Window Resize Event"</em>. Watch the zombie callbacks light up on the leaking side while the fixed side remains silent!
+          </div>
+        </section>
+
+        <!-- Comparison Columns: Leaking vs Fixed -->
+        <div class="comparison-grid">
+          <!-- COLUMN 1: LEAKING VERSION -->
+          <div class="column-card leaking-border">
+            <div class="column-header leaking-header">
+              <div class="column-title-group">
+                <span class="pill danger-pill">Buggy</span>
+                <h2>Leaking Component</h2>
+              </div>
+              <span class="dom-badge" [class.badge-on]="isLeakingMounted()" [class.badge-off]="!isLeakingMounted()">
+                {{ isLeakingMounted() ? '● Mounted in DOM' : '○ Unmounted (Destroyed)' }}
+              </span>
+            </div>
+
+            <div class="column-body">
+              <p class="description">
+                Registers <code>window.addEventListener('resize')</code> capturing <code>this</code>.
+                <strong>Never calls <code>removeEventListener</code></strong> in <code>ngOnDestroy()</code>.
+              </p>
+
+              <!-- Controls -->
+              <div class="button-group">
+                <button 
+                  type="button"
+                  class="btn" 
+                  [class.btn-mount]="!isLeakingMounted()" 
+                  [class.btn-unmount]="isLeakingMounted()"
+                  (click)="toggleLeaking()">
+                  {{ isLeakingMounted() ? 'Close (Destroy Component)' : 'Open (Mount Component)' }}
+                </button>
+                <button 
+                  type="button"
+                  class="btn btn-cycle" 
+                  [disabled]="isCycling"
+                  (click)="cycleInstances('leaking', 5)">
+                  ⚡ Cycle 5x (Open & Close)
+                </button>
+              </div>
+
+              <!-- Component Mount Slot -->
+              <div class="mount-slot">
+                @if (isLeakingMounted()) {
+                  <app-leaking-demo />
+                } @else {
+                  <div class="empty-placeholder">
+                    <p>Component is currently <strong>unmounted</strong> from Angular DOM.</p>
+                    <p class="sub-placeholder">If you previously opened instances, their window listeners are still secretly running in the background!</p>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- COLUMN 2: FIXED VERSION -->
+          <div class="column-card fixed-border">
+            <div class="column-header fixed-header">
+              <div class="column-title-group">
+                <span class="pill success-pill">Best Practice</span>
+                <h2>Fixed Component</h2>
+              </div>
+              <span class="dom-badge" [class.badge-on]="isFixedMounted()" [class.badge-off]="!isFixedMounted()">
+                {{ isFixedMounted() ? '● Mounted in DOM' : '○ Unmounted (Destroyed)' }}
+              </span>
+            </div>
+
+            <div class="column-body">
+              <p class="description">
+                Stores listener reference and <strong>calls <code>window.removeEventListener('resize', this.handler)</code></strong> in <code>ngOnDestroy()</code>.
+              </p>
+
+              <!-- Controls -->
+              <div class="button-group">
+                <button 
+                  type="button"
+                  class="btn" 
+                  [class.btn-mount]="!isFixedMounted()" 
+                  [class.btn-unmount]="isFixedMounted()"
+                  (click)="toggleFixed()">
+                  {{ isFixedMounted() ? 'Close (Destroy Component)' : 'Open (Mount Component)' }}
+                </button>
+                <button 
+                  type="button"
+                  class="btn btn-cycle" 
+                  [disabled]="isCycling"
+                  (click)="cycleInstances('fixed', 5)">
+                  ⚡ Cycle 5x (Open & Close)
+                </button>
+              </div>
+
+              <!-- Component Mount Slot -->
+              <div class="mount-slot">
+                @if (isFixedMounted()) {
+                  <app-fixed-demo />
+                } @else {
+                  <div class="empty-placeholder">
+                    <p>Component is currently <strong>unmounted</strong> from Angular DOM.</p>
+                    <p class="sub-placeholder">All event listeners were removed during destroy. No retained references remain!</p>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Diagnostic Terminal Logs -->
+        <section class="logs-section">
+          <div class="section-header">
+            <div class="title-with-count">
+              <h3>Diagnostic Activity Logs</h3>
+              <span class="count-bubble">{{ filteredLogs.length }}</span>
+            </div>
+            <div class="filter-pills">
+              <button type="button" class="filter-btn" [class.active]="logFilter() === 'ALL'" (click)="setFilter('ALL')">All</button>
+              <button type="button" class="filter-btn" [class.active]="logFilter() === 'RESIZE_EVENT'" (click)="setFilter('RESIZE_EVENT')">Resize Events</button>
+              <button type="button" class="filter-btn" [class.active]="logFilter() === 'LIFECYCLE'" (click)="setFilter('LIFECYCLE')">Lifecycle</button>
+              <button type="button" class="filter-btn" [class.active]="logFilter() === 'GC_DIAGNOSTIC'" (click)="setFilter('GC_DIAGNOSTIC')">GC Diagnostics</button>
+            </div>
+          </div>
+
+          <div class="terminal-box">
+            @if (filteredLogs.length === 0) {
+              <div class="empty-terminal">No activity logs recorded yet. Open components or trigger a resize to see events.</div>
+            } @else {
+              <div class="log-stream">
+                @for (log of filteredLogs; track log.id) {
+                  <div class="log-row" [class.zombie-log]="log.isZombie" [class.lifecycle-log]="log.category === 'LIFECYCLE'" [class.gc-log]="log.category === 'GC_DIAGNOSTIC'">
+                    <span class="log-time">{{ log.timestamp }}</span>
+                    <span class="log-tag tag-{{ log.category.toLowerCase() }}">{{ log.category }}</span>
+                    <span class="log-source">[{{ log.source }}]</span>
+                    <span class="log-msg">{{ log.message }}</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- Instance Lifetime & WeakRef Diagnostic Table -->
+        <section class="tracker-section">
+          <div class="section-header">
+            <div>
+              <h3>Object Lifetime & Memory Retention Inspector</h3>
+              <p class="section-subtitle">
+                Uses <code>WeakRef</code> and <code>FinalizationRegistry</code> to check if unmounted instances are still retained in memory.
+              </p>
+            </div>
+            <button type="button" class="action-btn btn-secondary btn-sm" (click)="checkMemoryStatus()">
+              🔄 Re-evaluate WeakRef Status
+            </button>
+          </div>
+
+          <div class="table-container">
+            @if (memoryTracker.records().length === 0) {
+              <div class="empty-state">No component instances created yet. Click "Open Component" or "Cycle 5x" above.</div>
+            } @else {
+              <table class="diag-table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Instance</th>
+                    <th>DOM Status</th>
+                    <th>Window Listener</th>
+                    <th>WeakRef Liveness</th>
+                    <th>GC Finalization Status</th>
+                    <th>Registered At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (rec of memoryTracker.records(); track rec.type + rec.id) {
+                    <tr [class.retained-row]="rec.type === 'leaking' && !rec.isMountedInDom" [class.clean-row]="rec.type === 'fixed' && !rec.isMountedInDom">
+                      <td>
+                        <span class="pill" [class.danger-pill]="rec.type === 'leaking'" [class.success-pill]="rec.type === 'fixed'">
+                          {{ rec.type | uppercase }}
+                        </span>
+                      </td>
+                      <td><strong>#{{ rec.id }}</strong> ({{ rec.label }})</td>
+                      <td>
+                        <span class="status-indicator" [class.is-live]="rec.isMountedInDom">
+                          {{ rec.isMountedInDom ? '🟢 In DOM' : '⚪ Unmounted' }}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="listener-status" [class.leak-active]="rec.listenerActive && !rec.isMountedInDom">
+                          {{ rec.listenerActive ? (rec.isMountedInDom ? 'Active (Expected)' : '⚠️ LEAKING ON WINDOW') : '✅ Detached' }}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="badge-subtle" [class.retained-badge]="rec.isWeakRefAlive" [class.collected-badge]="!rec.isWeakRefAlive">
+                          {{ rec.isWeakRefAlive ? '⚠️ Referenced in Memory' : '♻️ Cleared' }}
+                        </span>
+                      </td>
+                      <td>
+                        @if (rec.isFinalizedByGC) {
+                          <span class="gc-reclaimed">✅ Finalized at {{ rec.finalizedAt }}</span>
+                        } @else {
+                          <span class="gc-pending">⏳ {{ rec.type === 'leaking' ? 'Pinned (Cannot Collect)' : 'Eligible for GC' }}</span>
+                        }
+                      </td>
+                      <td class="timestamp-col">{{ rec.registeredAt }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+          </div>
+          <div class="gc-notice">
+            <strong>Crucial Note on Garbage Collection:</strong>
+            JavaScript garbage collection is nondeterministic. The V8 engine reclaims eligible objects during major GC cycles.
+            To force Chrome to collect eligible objects immediately: open <strong>DevTools &rarr; Memory &rarr; click the trash can icon (Collect Garbage)</strong>, then click <em>"Re-evaluate WeakRef Status"</em>!
+          </div>
+        </section>
+      </div>
+    }
+
+    <!-- TAB 2: ROOT CAUSE & ARCHITECTURE -->
+    @if (activeTab() === 'architecture') {
+      <div class="doc-view">
+        <div class="doc-card">
+          <h2>1. The Root Cause: Why Angular Memory Leaks Happen</h2>
+          <p>
+            In Angular applications, components have a lifecycle managed by the Angular framework.
+            When an <code>&#64;if</code> or <code>*ngIf</code> condition evaluates to <code>false</code>, or when a user navigates to a different route, Angular:
+          </p>
+          <ol class="step-list">
+            <li>Calls the component's <code>ngOnDestroy()</code> lifecycle hook.</li>
+            <li>Removes the component's HTML element from the browser DOM.</li>
+            <li>Destroys the component's change detector and internal Angular view structures.</li>
+          </ol>
+          <div class="highlight-callout alert-danger">
+            <strong>The Critical Mistake:</strong>
+            Removing a component from the DOM <em>does not mean</em> it is garbage collected!
+            If any global object (such as <code>window</code>, <code>document</code>, or a root singleton service) holds a reference to the component or its methods, V8's Garbage Collector treats the component as <strong>reachable</strong> from the GC root.
+          </div>
+        </div>
+
+        <div class="doc-card">
+          <h2>2. The Retaining Reference Graph</h2>
+          <div class="diagram-box">
+            <pre class="ascii-diagram">
++-------------------------------------------------------+
+|  GC ROOT: Browser Global 'window'                     |
++-------------------------------------------------------+
+                           |
+                           | holds event listener table
+                           v
++-------------------------------------------------------+
+|  Resize Listener Callback (Closure)                   |
++-------------------------------------------------------+
+                           |
+                           | captures `this`
+                           v
++-------------------------------------------------------+
+|  Destroyed Component Instance (LeakingDemoComponent)  |
++-------------------------------------------------------+
+                           |
+                           | owns property `payload`
+                           v
++-------------------------------------------------------+
+|  LeakedPayload (Holds Array of 3,000 strings)         |
++-------------------------------------------------------+
+   ===> ENTIRE SUBTREE IS PINNED IN HEAP MEMORY FOREVER!
+            </pre>
+          </div>
+          <p>
+            Because <code>window</code> is never garbage collected, any closure registered on <code>window</code> keeps its captured scope alive.
+            Each time a user visits and leaves a leaking view, another component instance and its memory payload are permanently stranded in the heap.
+          </p>
+        </div>
+
+        <div class="doc-card">
+          <h2>3. Code Comparison: Leaking vs Fixed</h2>
+          <div class="code-comparison">
+            <div class="code-pane">
+              <div class="pane-title danger-bg">❌ Leaking Implementation</div>
+              <pre class="code-block"><code>// Component mounts
+ngOnInit(): void &#123;
+  // Arrow function closes over 'this'
+  this.windowResizeHandler = () => &#123;
+    console.log(this.payload.marker);
+  &#125;;
+  window.addEventListener('resize', this.windowResizeHandler);
+&#125;
+
+// Component unmounts
+ngOnDestroy(): void &#123;
+  // ❌ FORGOT to call removeEventListener!
+  // window still holds this.windowResizeHandler.
+  // Component is unmounted from DOM, but lives forever in heap!
+&#125;</code></pre>
+            </div>
+
+            <div class="code-pane">
+              <div class="pane-title success-bg">✅ Fixed Implementation</div>
+              <pre class="code-block"><code>// Component mounts
+ngOnInit(): void &#123;
+  // Exact function reference stored on instance
+  this.windowResizeHandler = () => &#123;
+    console.log(this.payload.marker);
+  &#125;;
+  window.addEventListener('resize', this.windowResizeHandler);
+&#125;
+
+// Component unmounts
+ngOnDestroy(): void &#123;
+  // ✅ Cleanly unregisters the exact reference
+  if (this.windowResizeHandler) &#123;
+    window.removeEventListener('resize', this.windowResizeHandler);
+  &#125;
+  // All references from window are broken!
+  // V8 can now safely collect this component and payload.
+&#125;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-card">
+          <h2>4. Expected Behavior Comparison</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Behavior Aspect</th>
+                <th>Leaking Component</th>
+                <th>Fixed Component</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Window Resize Behavior</strong></td>
+                <td class="text-danger">Every destroyed instance still executes callbacks ("Zombie callbacks").</td>
+                <td class="text-success">Callbacks cease immediately upon unmount.</td>
+              </tr>
+              <tr>
+                <td><strong>Retaining Path</strong></td>
+                <td class="text-danger">Pinned via <code>window &rarr; EventListener &rarr; closure context &rarr; this</code>.</td>
+                <td class="text-success">No retaining path; isolated from GC roots.</td>
+              </tr>
+              <tr>
+                <td><strong>Heap Snapshot Filter</strong></td>
+                <td class="text-danger">Multiple instances of <code>LeakedPayload</code> persist after clicking GC.</td>
+                <td class="text-success">0 instances of <code>CleanPayload</code> persist when unmounted after GC.</td>
+              </tr>
+              <tr>
+                <td><strong>Memory Consumption</strong></td>
+                <td class="text-danger">Grows linearly: \(O(N)\) where \(N\) is the number of open/close cycles.</td>
+                <td class="text-success">Stays flat: \(O(1)\) bounded memory usage.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    <!-- TAB 3: DEVTOOLS PROFILING GUIDE -->
+    @if (activeTab() === 'guide') {
+      <div class="doc-view">
+        <div class="doc-card">
+          <h2>Chrome DevTools Heap Profiling: Step-by-Step Proof</h2>
+          <p>
+            To prove a memory leak scientifically to your mentor, you must not rely merely on console logs.
+            You must capture <strong>Heap Snapshots</strong> in Google Chrome DevTools to show retained objects in the V8 heap.
+          </p>
+        </div>
+
+        <div class="step-guide">
+          <div class="guide-step">
+            <div class="step-badge">Step 1</div>
+            <div class="step-body">
+              <h3>Open Chrome DevTools</h3>
+              <p>Press <kbd>F12</kbd> or <kbd>Ctrl + Shift + I</kbd> (Mac: <kbd>Cmd + Option + I</kbd>). Navigate to the <strong>Memory</strong> panel.</p>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="step-badge">Step 2</div>
+            <div class="step-body">
+              <h3>Take Baseline Snapshot (Snapshot 1)</h3>
+              <p>
+                Select <strong>Heap snapshot</strong> &rarr; Click <strong>Take snapshot</strong>.
+                This establishes your baseline memory before opening any demo components.
+              </p>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="step-badge">Step 3</div>
+            <div class="step-body">
+              <h3>Exercise the Leaking Component</h3>
+              <p>
+                Click <strong>"Cycle 5x"</strong> on the Leaking Component (or manually open and close it 5 times).
+                Ensure it is currently <strong>unmounted (closed)</strong>.
+              </p>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="step-badge">Step 4</div>
+            <div class="step-body">
+              <h3>Force Garbage Collection & Take Snapshot 2</h3>
+              <p>
+                In the DevTools Memory panel, click the <strong>Trash Can icon</strong> ("Collect garbage") at the top left to force a major V8 GC cycle.
+                Now click <strong>Take snapshot</strong>.
+              </p>
+              <div class="instruction-pill">
+                Type <code>LeakedPayload</code> or <code>LeakingDemoComponent</code> into the <strong>Class filter</strong> box.
+                <br>
+                <strong>Observation:</strong> You will see 5 instances still retained in memory! Click on any instance and look at the <strong>Retainers</strong> panel at the bottom: you will see the retaining path rooted at <code>window.addEventListener</code>.
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="step-badge">Step 5</div>
+            <div class="step-body">
+              <h3>Exercise the Fixed Component</h3>
+              <p>
+                Click <strong>"Cycle 5x"</strong> on the Fixed Component. Ensure it is currently <strong>unmounted (closed)</strong>.
+              </p>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="step-badge">Step 6</div>
+            <div class="step-body">
+              <h3>Force Garbage Collection & Take Snapshot 3</h3>
+              <p>
+                Click the <strong>Trash Can icon</strong> again. Click <strong>Take snapshot</strong>.
+              </p>
+              <div class="instruction-pill success-pill-box">
+                Type <code>CleanPayload</code> or <code>FixedDemoComponent</code> into the <strong>Class filter</strong> box.
+                <br>
+                <strong>Observation:</strong> Exactly <strong>0 instances</strong> exist! The browser's garbage collector successfully reclaimed all 5 instances because the reference was cleanly severed in <code>ngOnDestroy()</code>.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-card">
+          <h2>Summary Matrix for Mentor Presentation</h2>
+          <div class="summary-box">
+            <p><strong>30-Second Summary for your Mentor:</strong></p>
+            <blockquote>
+              "In Angular, unmounting a component from the DOM only tears down its template view; it does not destroy JavaScript object references held globally.
+              Because the leaking component registered a listener on the global <code>window</code> object and failed to remove it in <code>ngOnDestroy()</code>, the window object's event listener table permanently retained the closure, the component instance, and its entire data payload.
+              In our fixed version, we store the listener reference and invoke <code>window.removeEventListener</code> inside <code>ngOnDestroy()</code>, breaking the retain chain and allowing the V8 engine to collect the memory during the next GC cycle."
+            </blockquote>
+          </div>
+        </div>
+      </div>
+    }
+  </main>
+</div>

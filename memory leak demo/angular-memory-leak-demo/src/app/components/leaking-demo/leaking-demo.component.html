@@ -1,0 +1,45 @@
+<div class="demo-card leaking-card">
+  <div class="card-header">
+    <div class="header-title">
+      <span class="badge danger-badge">Leaking Implementation</span>
+      <h3>Instance #{{ instanceId }}</h3>
+    </div>
+    <span class="time-stamp">Created at: {{ createdAt }}</span>
+  </div>
+
+  <div class="card-body">
+    <div class="info-row">
+      <span class="label">Status:</span>
+      <span class="value live-status">🟢 Active in DOM</span>
+    </div>
+
+    <div class="info-row">
+      <span class="label">Identifiable Payload:</span>
+      <span class="value code-val">LeakedPayload ({{ payload.buffer.length }} items)</span>
+    </div>
+
+    <div class="info-row">
+      <span class="label">Heap Marker:</span>
+      <span class="value code-val">{{ payload.marker }}</span>
+    </div>
+
+    <div class="info-row">
+      <span class="label">Local Resize Events Handled:</span>
+      <span class="value count-val">{{ localResizeEventsCount() }}</span>
+    </div>
+
+    <div class="info-row">
+      <span class="label">Window Width Reported:</span>
+      <span class="value">{{ currentWindowWidth() }} px</span>
+    </div>
+
+    <div class="warning-callout">
+      <strong>⚠️ Intentional Leak Notice:</strong>
+      <p>
+        This component registered a listener via <code>window.addEventListener('resize')</code>.
+        When you close (unmount) this component, <code>window.removeEventListener</code> will <strong>NOT</strong> be called.
+        The global <code>window</code> object will permanently retain this component instance and its payload!
+      </p>
+    </div>
+  </div>
+</div>
