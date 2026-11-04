@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript + Flask Direct Integration Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="badge">Week 3 Internship Demo</div>
+      <h1>JavaScript &harr; Flask Integration</h1>
+      <p class="subtitle">Direct browser-to-backend communication using the native <code>fetch()</code> API without any frontend frameworks.</p>
+    </header>
+
+    <!-- Backend Status Banner -->
+    <section class="card status-card">
+      <div class="status-header">
+        <h2>Backend Status Check</h2>
+        <button id="btnHealth" class="btn btn-secondary">
+          <span class="spinner" id="spinnerHealth"></span>
+          Check Health (GET /health)
+        </button>
+      </div>
+      <div id="healthResult" class="result-box hidden"></div>
+    </section>
+
+    <!-- Grid of Two Columns: GET and POST -->
+    <main class="grid-2">
+      <!-- Section 1: GET /hello -->
+      <section class="card">
+        <div class="card-badge get-badge">GET</div>
+        <h2>1. Simple Hello API</h2>
+        <p class="description">
+          Issues a <code>GET</code> request to <code>http://127.0.0.1:5000/hello</code> using JavaScript <code>fetch()</code>.
+        </p>
+        <button id="btnHello" class="btn btn-primary">
+          <span class="spinner" id="spinnerHello"></span>
+          Call /hello
+        </button>
+        <div id="helloResult" class="result-box hidden"></div>
+      </section>
+
+      <!-- Section 2: POST /greet -->
+      <section class="card">
+        <div class="card-badge post-badge">POST</div>
+        <h2>2. Personalized Greeting API</h2>
+        <p class="description">
+          Sends a <code>POST</code> request with a JSON payload <code>{"name": "..."}</code> to <code>http://127.0.0.1:5000/greet</code>.
+        </p>
+
+        <form id="greetForm" class="form" onsubmit="return false;">
+          <div class="form-group">
+            <label for="nameInput">Enter your name:</label>
+            <input 
+              type="text" 
+              id="nameInput" 
+              placeholder="e.g. Siddharth" 
+              autocomplete="off"
+            />
+            <small class="hint">Try leaving it empty to test backend 400 validation.</small>
+          </div>
+          <div class="btn-group">
+            <button type="submit" id="btnGreet" class="btn btn-success">
+              <span class="spinner" id="spinnerGreet"></span>
+              Send Greeting (POST /greet)
+            </button>
+            <button type="button" id="btnGreetClear" class="btn btn-outline">
+              Clear
+            </button>
+          </div>
+        </form>
+
+        <div id="greetResult" class="result-box hidden"></div>
+      </section>
+    </main>
+
+    <!-- Request/Response Flow Explainer -->
+    <section class="card info-card">
+      <h3>Under the Hood: How JavaScript Communicates with Flask</h3>
+      <ol class="flow-list">
+        <li><strong>User Action:</strong> Button click or form submit triggers a JavaScript event listener.</li>
+        <li><strong>Fetch Request:</strong> <code>fetch(url, options)</code> initiates an asynchronous HTTP request.</li>
+        <li><strong>CORS Check:</strong> Browser sends origin headers; Flask backend verifies allowed origins via <code>Flask-CORS</code>.</li>
+        <li><strong>Payload Processing:</strong> Flask parses JSON, validates input fields, and returns a JSON response with status code.</li>
+        <li><strong>DOM Update:</strong> JavaScript awaits the promise, extracts <code>await response.json()</code>, and renders the UI dynamically.</li>
+      </ol>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Angular + Flask Integration Project &bull; Week 3 Internship Learning Task</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

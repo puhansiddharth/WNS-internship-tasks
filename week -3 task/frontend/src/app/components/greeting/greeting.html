@@ -1,0 +1,93 @@
+<div class="greeting-wrapper">
+  <!-- Header -->
+  <div class="greeting-header">
+    <h1 class="page-title">Let's Make It Personal</h1>
+    <p class="page-desc">Enter your name and receive a personalized greeting.</p>
+  </div>
+
+  <!-- Interactive Card Container -->
+  <div class="greeting-card">
+    <form [formGroup]="greetingForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="input-field" [class.field-error]="nameControl?.invalid && (nameControl?.touched || isSubmitted)">
+        <label for="userName" class="field-label">Your Name</label>
+        
+        <div class="input-wrapper">
+          <input
+            id="userName"
+            type="text"
+            formControlName="name"
+            placeholder="Enter your full name"
+            class="text-input"
+            autocomplete="name"
+          />
+        </div>
+
+        <!-- Inline Validation -->
+        @if (nameControl?.invalid && (nameControl?.touched || isSubmitted)) {
+          <div class="validation-note">
+            @if (nameControl?.hasError('required')) {
+              <span>Please enter your name.</span>
+            }
+            @if (nameControl?.hasError('whitespace')) {
+              <span>Name cannot be blank.</span>
+            }
+            @if (nameControl?.hasError('minlength')) {
+              <span>Name must be at least 2 characters.</span>
+            }
+            @if (nameControl?.hasError('maxlength')) {
+              <span>Name cannot exceed 50 characters.</span>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+          @if (isLoading) {
+            <span class="spinner"></span>
+            <span>Saying Hello...</span>
+          } @else {
+            <span>Say Hello</span>
+          }
+        </button>
+
+        <button type="button" class="btn btn-secondary" (click)="resetForm()" [disabled]="isLoading">
+          Reset
+        </button>
+      </div>
+    </form>
+
+    <!-- Response Display -->
+    @if (greetingResponse && !isLoading) {
+      <div class="response-card success-banner">
+        <div class="avatar-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <div class="response-content">
+          <h2 class="greeting-text">{{ greetingResponse.message }}!</h2>
+          <p class="greeting-sub">Glad to have you here today. Enjoy your exploration!</p>
+        </div>
+      </div>
+    }
+
+    <!-- Error Display -->
+    @if (errorMessage && !isLoading) {
+      <div class="response-card error-banner">
+        <div class="error-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <div class="response-content">
+          <p class="error-msg">{{ errorMessage }}</p>
+        </div>
+      </div>
+    }
+  </div>
+</div>

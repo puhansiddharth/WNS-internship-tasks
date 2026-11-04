@@ -1,0 +1,582 @@
+<div class="about-wrapper">
+  <!-- Header -->
+  <div class="doc-header">
+    <div class="pill-badge">Internship Learning &amp; Technical Guide</div>
+    <h1 class="doc-title">Technical Architecture &amp; Implementation</h1>
+    <p class="doc-subtitle">
+      A comprehensive deep-dive into every architectural layer, design pattern, and API contract
+      used in this Angular + Flask full-stack application.
+    </p>
+
+    <!-- Toolbar with Filter Pills and Expand/Collapse Controls -->
+    <div class="doc-toolbar">
+      <div class="filter-pills">
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="activeFilter === 'all'"
+          (click)="setFilter('all')"
+        >
+          All Topics (15)
+        </button>
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="activeFilter === 'architecture'"
+          (click)="setFilter('architecture')"
+        >
+          Architecture &amp; Stack
+        </button>
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="activeFilter === 'api'"
+          (click)="setFilter('api')"
+        >
+          APIs &amp; Communication
+        </button>
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="activeFilter === 'angular'"
+          (click)="setFilter('angular')"
+        >
+          Angular Core &amp; Forms
+        </button>
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="activeFilter === 'setup'"
+          (click)="setFilter('setup')"
+        >
+          Setup &amp; Run
+        </button>
+      </div>
+
+      <div class="toggle-all-btns">
+        <button type="button" class="btn-text" (click)="expandAll()">Expand All</button>
+        <span class="divider">&bull;</span>
+        <button type="button" class="btn-text" (click)="collapseAll()">Collapse All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accordion Sections Container -->
+  <div class="accordion-list">
+
+    <!-- 1. Project Overview -->
+    @if (activeFilter === 'all' || activeFilter === 'architecture') {
+      <div class="accordion-item" [class.open]="isSectionOpen(1)">
+        <button type="button" class="accordion-header" (click)="toggleSection(1)">
+          <div class="header-left">
+            <span class="section-num">01</span>
+            <span class="section-title">Project Overview</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(1) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(1)) {
+          <div class="accordion-body">
+            <p>
+              The <strong>Angular Flask Integration Demo</strong> is a decoupled, modern client-server application.
+              Rather than traditional server-side template rendering, the frontend runs as an independent Single Page Application (SPA)
+              and communicates with the Python Flask backend entirely through asynchronous HTTP REST requests.
+            </p>
+            <div class="architecture-diagram">
+              <div class="tier-card client-tier">
+                <strong>Client Tier (Port 4200)</strong>
+                <span>Angular 21 SPA &bull; Reactive Forms &bull; HttpClient</span>
+              </div>
+              <div class="diagram-arrow">&harr; HTTP JSON &bull; CORS &harr;</div>
+              <div class="tier-card server-tier">
+                <strong>Server Tier (Port 5000)</strong>
+                <span>Python Flask &bull; Flask-CORS &bull; REST Endpoints</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- 2. Purpose of the Project -->
+    @if (activeFilter === 'all' || activeFilter === 'architecture') {
+      <div class="accordion-item" [class.open]="isSectionOpen(2)">
+        <button type="button" class="accordion-header" (click)="toggleSection(2)">
+          <div class="header-left">
+            <span class="section-num">02</span>
+            <span class="section-title">Purpose of the Project</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(2) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(2)) {
+          <div class="accordion-body">
+            <p>This project fulfills the <strong>Week 3 Internship Learning Plan</strong> objectives:</p>
+            <ul class="styled-list">
+              <li>Building modular REST APIs with Flask and returning structured JSON payloads.</li>
+              <li>Mastering Cross-Origin Resource Sharing (CORS) configurations between disparate dev servers.</li>
+              <li>Implementing Angular Reactive Forms with client-side synchronous validation.</li>
+              <li>Injecting singleton HTTP services using modern Angular Dependency Injection.</li>
+              <li>Comparing framework-based HTTP handling (RxJS Observables) against vanilla JavaScript <code>fetch()</code>.</li>
+            </ul>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- 3. Technology Stack -->
+    @if (activeFilter === 'all' || activeFilter === 'architecture') {
+      <div class="accordion-item" [class.open]="isSectionOpen(3)">
+        <button type="button" class="accordion-header" (click)="toggleSection(3)">
+          <div class="header-left">
+            <span class="section-num">03</span>
+            <span class="section-title">Technology Stack</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(3) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(3)) {
+          <div class="accordion-body">
+            <div class="tech-table-wrap">
+              <table class="tech-table">
+                <thead>
+                  <tr>
+                    <th>Domain</th>
+                    <th>Technology</th>
+                    <th>Version</th>
+                    <th>Key Role</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Frontend</strong></td>
+                    <td>Angular</td>
+                    <td>21.2.0</td>
+                    <td>Standalone Components, Router, Zoneless CD</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Language</strong></td>
+                    <td>TypeScript</td>
+                    <td>5.9.2</td>
+                    <td>Strict typing &amp; API request/response models</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Forms</strong></td>
+                    <td>Reactive Forms</td>
+                    <td>21.2.0</td>
+                    <td>Declarative form state &amp; multi-rule validation</td>
+                  </tr>
+                  <tr>
+                    <td><strong>HTTP</strong></td>
+                    <td>HttpClient + RxJS</td>
+                    <td>7.8.0</td>
+                    <td>Observable streams, error catching, finalize</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Backend</strong></td>
+                    <td>Python / Flask</td>
+                    <td>3.11 / 3.1.3</td>
+                    <td>WSGI microservice, routing &amp; JSON serialization</td>
+                  </tr>
+                  <tr>
+                    <td><strong>CORS</strong></td>
+                    <td>Flask-CORS</td>
+                    <td>6.0.5</td>
+                    <td>Cross-origin headers for localhost:4200</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- 4. Frontend Architecture -->
+    @if (activeFilter === 'all' || activeFilter === 'architecture') {
+      <div class="accordion-item" [class.open]="isSectionOpen(4)">
+        <button type="button" class="accordion-header" (click)="toggleSection(4)">
+          <div class="header-left">
+            <span class="section-num">04</span>
+            <span class="section-title">Frontend Architecture</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(4) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(4)) {
+          <div class="accordion-body">
+            <p>
+              The frontend is constructed using Angular's modern <strong>Standalone Component</strong> architecture.
+              Legacy <code>NgModule</code> declarations have been replaced with self-contained imports.
+            </p>
+            <ul class="styled-list">
+              <li><strong>Root Component (<code>App</code>):</strong> Houses the layout structure, sticky navigation, and <code>&lt;router-outlet&gt;</code>.</li>
+              <li><strong>Environment Config:</strong> <code>environment.ts</code> centralizes the API base URL (<code>http://127.0.0.1:5000</code>).</li>
+              <li><strong>Change Detection:</strong> Configured with <code>provideZonelessChangeDetection()</code> and explicit <code>ChangeDetectorRef.markForCheck()</code>.</li>
+            </ul>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- 5. Backend Architecture -->
+    @if (activeFilter === 'all' || activeFilter === 'architecture') {
+      <div class="accordion-item" [class.open]="isSectionOpen(5)">
+        <button type="button" class="accordion-header" (click)="toggleSection(5)">
+          <div class="header-left">
+            <span class="section-num">05</span>
+            <span class="section-title">Backend Architecture</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(5) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(5)) {
+          <div class="accordion-body">
+            <p>
+              The backend application is implemented in <code>backend/app.py</code> as a clean, stateless REST API server:
+            </p>
+            <ul class="styled-list">
+              <li><strong>Defensive JSON Parsing:</strong> Verifies <code>request.is_json</code> and inspects payloads via <code>request.get_json(silent=True)</code> to prevent unhandled 500 crashes.</li>
+              <li><strong>Input Sanitization:</strong> Trims whitespace from incoming strings and rejects empty values with HTTP 400 Bad Request.</li>
+              <li><strong>Standardized JSON Handlers:</strong> Custom error handlers for 400, 404, 405, and 500 guarantee that errors are returned as JSON, never raw HTML.</li>
+            </ul>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- 6. Flask API Endpoints -->
+    @if (activeFilter === 'all' || activeFilter === 'api') {
+      <div class="accordion-item" [class.open]="isSectionOpen(6)">
+        <button type="button" class="accordion-header" (click)="toggleSection(6)">
+          <div class="header-left">
+            <span class="section-num">06</span>
+            <span class="section-title">Flask API Endpoints</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(6) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(6)) {
+          <div class="accordion-body">
+            <div class="endpoint-cards">
+              <div class="endpoint-card">
+                <div class="endpoint-badge get">GET</div>
+                <div class="endpoint-path">/health</div>
+                <p>System health check. Returns backend uptime, service status, and current server timestamp.</p>
+                <div class="code-preview">
+                  <code>&#123; "status": "healthy", "service": "Flask Backend", "uptime_seconds": 15.2 &#125;</code>
+                </div>
+              </div>
+
+              <div class="endpoint-card">
+                <div class="endpoint-badge get">GET</div>
+                <div class="endpoint-path">/hello</div>
+                <p>Static welcoming endpoint returning a simple JSON greeting.</p>
+                <div class="code-preview">
+                  <code>&#123; "message": "Hello from Flask" &#125;</code>
+                </div>
+              </div>
+
+              <div class="endpoint-card">
+                <div class="endpoint-badge post">POST</div>
+                <div class="endpoint-path">/greet</div>
+                <p>Dynamic greeting. Expects <code>&#123;"name": "string"&#125;</code>. Rejects empty names with HTTP 400.</p>
+                <div class="code-preview">
+                  <code>&#123; "message": "Hello Siddharth", "timestamp": "2026-11-04T12:00:00Z" &#125;</code>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- 7. Angular Components and Routing -->
+    @if (activeFilter === 'all' || activeFilter === 'angular') {
+      <div class="accordion-item" [class.open]="isSectionOpen(7)">
+        <button type="button" class="accordion-header" (click)="toggleSection(7)">
+          <div class="header-left">
+            <span class="section-num">07</span>
+            <span class="section-title">Angular Components and Routing</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(7) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(7)) {
+          <div class="accordion-body">
+            <p>
+              Navigation is managed client-side by <strong>Angular Router</strong> without page reloads.
+              The routes table in <code>app.routes.ts</code> maps clean paths:
+            </p>
+            <div class="routes-list">
+              <div class="route-row">
+                <span class="route-badge">/</span>
+                <span><strong>HomeComponent</strong> &ndash; SaaS landing page with hero and feature highlights.</span>
+              </div>
+              <div class="route-row">
+                <span class="route-badge">/greet</span>
+                <span><strong>GreetingComponent</strong> &ndash; Interactive form connected to Flask POST /greet.</span>
+              </div>
+              <div class="route-row">
+                <span class="route-badge">/about</span>
+                <span><strong>AboutComponent</strong> &ndash; Comprehensive documentation and architecture reference.</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- 8. Angular Services and Dependency Injection -->
+    @if (activeFilter === 'all' || activeFilter === 'angular') {
+      <div class="accordion-item" [class.open]="isSectionOpen(8)">
+        <button type="button" class="accordion-header" (click)="toggleSection(8)">
+          <div class="header-left">
+            <span class="section-num">08</span>
+            <span class="section-title">Angular Services &amp; Dependency Injection</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(8) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(8)) {
+          <div class="accordion-body">
+            <p>
+              In accordance with the <strong>Single Responsibility Principle</strong>, components never make direct HTTP calls.
+              All networking is centralized in <code>ApiService</code>:
+            </p>
+            <ul class="styled-list">
+              <li>Decorated with <code>@Injectable(&#123; providedIn: 'root' &#125;)</code>, making it an application-wide singleton.</li>
+              <li>Injected into components via constructor injection: <code>constructor(private apiService: ApiService)</code>.</li>
+              <li>Decouples presentation logic from network transport and error normalization.</li>
+            </ul>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- 9. HttpClient and API Communication -->
+    @if (activeFilter === 'all' || activeFilter === 'api') {
+      <div class="accordion-item" [class.open]="isSectionOpen(9)">
+        <button type="button" class="accordion-header" (click)="toggleSection(9)">
+          <div class="header-left">
+            <span class="section-num">09</span>
+            <span class="section-title">HttpClient &amp; API Communication</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(9) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(9)) {
+          <div class="accordion-body">
+            <p>
+              Angular <code>HttpClient</code> operates using <strong>RxJS Observables</strong> rather than standard Promises.
+              Observables provide powerful advantages:
+            </p>
+            <ul class="styled-list">
+              <li><strong>Type Generics:</strong> <code>http.post&lt;GreetResponse&gt;(url, body)</code> ensures strict compile-time payload safety.</li>
+              <li><strong>Pipeline Operators:</strong> Operators like <code>catchError()</code> and <code>finalize()</code> provide seamless lifecycle control.</li>
+              <li><strong>Cancellation:</strong> Subscriptions can be unsubscribed or canceled before response arrival if needed.</li>
+            </ul>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- 10. JavaScript Fetch API Integration -->
+    @if (activeFilter === 'all' || activeFilter === 'api') {
+      <div class="accordion-item" [class.open]="isSectionOpen(10)">
+        <button type="button" class="accordion-header" (click)="toggleSection(10)">
+          <div class="header-left">
+            <span class="section-num">10</span>
+            <span class="section-title">JavaScript Fetch API Integration</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(10) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(10)) {
+          <div class="accordion-body">
+            <p>
+              In <code>javascript-demo/index.html</code>, direct browser-to-Flask communication is demonstrated using vanilla JavaScript:
+            </p>
+            <div class="code-preview">
+              <code>
+                const res = await fetch('http://127.0.0.1:5000/greet', &#123;<br />
+                &nbsp;&nbsp;method: 'POST',<br />
+                &nbsp;&nbsp;headers: &#123; 'Content-Type': 'application/json' &#125;,<br />
+                &nbsp;&nbsp;body: JSON.stringify(&#123; name: 'Siddharth' &#125;)<br />
+                &#125;);<br />
+                const data = await res.json();
+              </code>
+            </div>
+            <p class="note-text">
+              This comparison highlights how frameworks like Angular build upon native HTTP primitives by adding dependency injection,
+              type checking, and declarative form binding.
+            </p>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- 11. CORS Handling -->
+    @if (activeFilter === 'all' || activeFilter === 'api') {
+      <div class="accordion-item" [class.open]="isSectionOpen(11)">
+        <button type="button" class="accordion-header" (click)="toggleSection(11)">
+          <div class="header-left">
+            <span class="section-num">11</span>
+            <span class="section-title">CORS (Cross-Origin Resource Sharing) Handling</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(11) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(11)) {
+          <div class="accordion-body">
+            <p>
+              Browsers enforce the <strong>Same-Origin Policy (SOP)</strong>. Because the Angular app runs on
+              <code>http://localhost:4200</code> and Flask runs on <code>http://127.0.0.1:5000</code>,
+              the browser treats requests as cross-origin.
+            </p>
+            <ul class="styled-list">
+              <li><strong>Preflight OPTIONS Request:</strong> When sending JSON headers, the browser automatically sends an HTTP <code>OPTIONS</code> probe.</li>
+              <li><strong>Flask-CORS Middleware:</strong> Intercepts preflight requests and replies with <code>Access-Control-Allow-Origin: http://localhost:4200</code>.</li>
+              <li>Without these response headers, the browser blocks the incoming response for security reasons.</li>
+            </ul>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- 12. Reactive Forms and Validation -->
+    @if (activeFilter === 'all' || activeFilter === 'angular') {
+      <div class="accordion-item" [class.open]="isSectionOpen(12)">
+        <button type="button" class="accordion-header" (click)="toggleSection(12)">
+          <div class="header-left">
+            <span class="section-num">12</span>
+            <span class="section-title">Reactive Forms &amp; Validation</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(12) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(12)) {
+          <div class="accordion-body">
+            <p>
+              Angular <strong>Reactive Forms</strong> provide a synchronous, programmatically testable form model.
+              In <code>GreetingComponent</code>:
+            </p>
+            <ul class="styled-list">
+              <li><strong>FormGroup &amp; FormBuilder:</strong> Form structure is defined in TypeScript rather than the template.</li>
+              <li><strong>Validation Pipeline:</strong> Combines <code>Validators.required</code>, <code>Validators.minLength(2)</code>, and a custom <code>nonWhitespaceValidator</code>.</li>
+              <li><strong>Defensive Execution:</strong> If the user enters whitespace or leaves the field blank, <code>markAllAsTouched()</code> highlights errors instantly without triggering unnecessary network calls.</li>
+            </ul>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- 13. Request-Response Lifecycle -->
+    @if (activeFilter === 'all' || activeFilter === 'angular') {
+      <div class="accordion-item" [class.open]="isSectionOpen(13)">
+        <button type="button" class="accordion-header" (click)="toggleSection(13)">
+          <div class="header-left">
+            <span class="section-num">13</span>
+            <span class="section-title">Request-Response Lifecycle</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(13) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(13)) {
+          <div class="accordion-body">
+            <ol class="step-list">
+              <li><strong>User Interaction:</strong> User enters name and clicks "Say Hello".</li>
+              <li><strong>Client Validation:</strong> Angular Reactive Forms verifies that the name meets all validation criteria.</li>
+              <li><strong>Loading State:</strong> <code>isLoading = true</code> disables the button and activates the spinner.</li>
+              <li><strong>Service Dispatch:</strong> <code>ApiService.greet(name)</code> posts JSON payload to <code>http://127.0.0.1:5000/greet</code>.</li>
+              <li><strong>Flask Processing:</strong> Backend verifies JSON, sanitizes string, and responds with HTTP 200 OK.</li>
+              <li><strong>Observable Emission:</strong> <code>next()</code> receives response; <code>finalize()</code> resets <code>isLoading = false</code>.</li>
+              <li><strong>DOM Update:</strong> Angular Zoneless scheduler renders the personalized greeting banner immediately.</li>
+            </ol>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- 14. Error Handling -->
+    @if (activeFilter === 'all' || activeFilter === 'angular') {
+      <div class="accordion-item" [class.open]="isSectionOpen(14)">
+        <button type="button" class="accordion-header" (click)="toggleSection(14)">
+          <div class="header-left">
+            <span class="section-num">14</span>
+            <span class="section-title">Error Handling Strategy</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(14) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(14)) {
+          <div class="accordion-body">
+            <p>
+              The application uses a multi-tiered error handling pattern:
+            </p>
+            <ul class="styled-list">
+              <li><strong>Status 0 (Network Offline):</strong> If Flask is not running, <code>handleError()</code> catches status 0 and displays a friendly message prompting the user to start the server.</li>
+              <li><strong>Status 400 (Validation Failure):</strong> Server error messages are extracted directly from the response JSON and displayed cleanly.</li>
+              <li><strong>UI Recovery:</strong> Buttons are re-enabled, loading spinners are dismissed, and the user can retry without reloading the page.</li>
+            </ul>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- 15. How to Run the Project -->
+    @if (activeFilter === 'all' || activeFilter === 'setup') {
+      <div class="accordion-item" [class.open]="isSectionOpen(15)">
+        <button type="button" class="accordion-header" (click)="toggleSection(15)">
+          <div class="header-left">
+            <span class="section-num">15</span>
+            <span class="section-title">How to Run the Project</span>
+          </div>
+          <span class="chevron-icon">{{ isSectionOpen(15) ? '&minus;' : '&plus;' }}</span>
+        </button>
+
+        @if (isSectionOpen(15)) {
+          <div class="accordion-body">
+            <div class="run-steps">
+              <div class="run-step">
+                <h4>Step 1: Start Flask Backend</h4>
+                <div class="code-preview">
+                  <code>
+                    cd backend<br />
+                    pip install -r requirements.txt<br />
+                    python app.py
+                  </code>
+                </div>
+                <small class="note-text">Runs on <code>http://127.0.0.1:5000</code></small>
+              </div>
+
+              <div class="run-step">
+                <h4>Step 2: Start Angular Frontend</h4>
+                <div class="code-preview">
+                  <code>
+                    cd frontend<br />
+                    npm install<br />
+                    npm start
+                  </code>
+                </div>
+                <small class="note-text">Runs on <code>http://localhost:4200</code></small>
+              </div>
+
+              <div class="run-step">
+                <h4>Step 3: Test JavaScript Demo (Optional)</h4>
+                <div class="code-preview">
+                  <code>
+                    cd javascript-demo<br />
+                    python -m http.server 8000
+                  </code>
+                </div>
+                <small class="note-text">Open <code>http://localhost:8000</code> in your browser</small>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</div>
