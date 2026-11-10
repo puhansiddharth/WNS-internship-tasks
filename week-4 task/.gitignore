@@ -1,0 +1,34 @@
+# Dependencies & Build Artefacts
+node_modules/
+.angular/
+dist/
+tmp/
+out-tsc/
+bazel-out/
+
+# Python & Testing
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.env
+.env.*
+!.env.example
+.venv/
+env/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# IDE & OS
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.log
