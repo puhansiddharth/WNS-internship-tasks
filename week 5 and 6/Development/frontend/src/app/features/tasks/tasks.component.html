@@ -1,0 +1,55 @@
+<main class="task-page">
+  <header>
+    <div><h1>My tasks</h1>
+      @if (!loading() && !loadError()) { <p>{{ pending() }} pending · {{ tasks().length }} total</p> }
+    </div>
+    <a routerLink="/dashboard">Open chatbot</a>
+  </header>
+  <form (ngSubmit)="save()">
+    <label for="task-title">{{ editingId ? 'Edit task title' : 'New task' }}</label>
+    <div class="form-row">
+      <input id="task-title" name="title" [(ngModel)]="title" required maxlength="160"
+        [disabled]="saving() || loading() || loadError()" placeholder="Submit internship report">
+      <button class="primary" [disabled]="!title.trim() || saving() || loading() || loadError()">
+        {{ saving() ? 'Saving…' : editingId ? 'Save changes' : 'Add task' }}
+      </button>
+      @if (editingId) { <button type="button" (click)="cancelEdit()" [disabled]="saving()">Cancel</button> }
+    </div>
+  </form>
+  @if (saveError()) { <p role="alert" class="error">{{ saveError() }}</p> }
+  @if (loading()) {
+    <p role="status">Loading tasks…</p>
+  } @else if (loadError()) {
+    <div class="error" role="alert">Could not load your tasks. <button (click)="load()">Retry</button></div>
+  } @else {
+    <nav aria-label="Task filters">
+      <button [attr.aria-pressed]="filter() === 'all'" (click)="filter.set('all')">All</button>
+      <button [attr.aria-pressed]="filter() === 'pending'" (click)="filter.set('pending')">Pending</button>
+      <button [attr.aria-pressed]="filter() === 'completed'" (click)="filter.set('completed')">Completed</button>
+    </nav>
+    @if (filtered().length) {
+      <ul>
+        @for (task of filtered(); track task.id) {
+          <li>
+            <label class="task-label">
+              <input type="checkbox" [checked]="task.status === 'completed'" [disabled]="saving()"
+                (change)="$any($event.target).checked = task.status === 'completed'; toggle(task)">
+              <span [class.completed]="task.status === 'completed'">{{ task.title }}</span>
+            </label>
+            <div class="actions">
+              @if (deletingId() === task.id) {
+                <button class="danger" (click)="remove(task)" [disabled]="saving()">Confirm delete</button>
+                <button (click)="deletingId.set(null)" [disabled]="saving()">Cancel</button>
+              } @else {
+                <button (click)="edit(task)" [disabled]="saving()">Edit</button>
+                <button class="danger" (click)="deletingId.set(task.id)" [disabled]="saving()">Delete</button>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p role="status">{{ filter() === 'all' ? 'No tasks yet. Add your first task above.' : 'No ' + filter() + ' tasks.' }}</p>
+    }
+  }
+</main>

@@ -1,0 +1,130 @@
+/* Global Styles & Design System - Premium AI Chatbot Palette */
+:root {
+  /* Core Chatbot Surfaces */
+  --bg-primary: #0B0D10;
+  --bg-sidebar: #11141A;
+  --bg-sidebar-hover: #171B24;
+  --bg-user-bubble: #1C2533;
+  --bg-assistant: transparent;
+  --bg-assistant-elevated: #131720;
+  --bg-input: #151921;
+  --bg-input-focus: #181D27;
+  --bg-card: #151922;
+  --bg-card-hover: #1A202C;
+  --bg-elevated: #161B24;
+  --bg-popover: #161A22;
+  --bg-overlay: rgba(11, 13, 16, 0.75);
+
+  /* Borders */
+  --border-subtle: #252B35;
+  --border-active: #323A48;
+  --border-focus: #E8B43D;
+  --border-card: #1E242F;
+
+  /* Typography */
+  --text-primary: #F5F5F5;
+  --text-secondary: #929BAA;
+  --text-muted: #647082;
+  --text-dim: #4B5565;
+  --text-inverse: #0B0D10;
+
+  /* Premium Warm Gold Accent */
+  --accent-primary: #E8B43D;
+  --accent-hover: #F2C355;
+  --accent-dim: rgba(232, 180, 61, 0.12);
+  --accent-glow: rgba(232, 180, 61, 0.22);
+  --accent-yellow: #E8B43D;
+  --accent-yellow-hover: #F2C355;
+
+  /* Status Colors */
+  --status-success: #10B981;
+  --status-success-bg: rgba(16, 185, 129, 0.12);
+  --status-error: #EF4444;
+  --status-error-bg: rgba(239, 68, 68, 0.12);
+  --status-warning: #F59E0B;
+
+  /* Typography Fonts */
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 20px rgba(232, 180, 61, 0.15);
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-active);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Common form utilities */
+button, input, textarea {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: all var(--transition-fast);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+a {
+  color: var(--accent-yellow);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--accent-yellow-hover);
+  text-decoration: underline;
+}
